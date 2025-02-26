@@ -233,7 +233,8 @@ namespace ToI_1
             int length = 0;
             while (length < text.Length)
             {
-                length += Array.IndexOf(indexes, count + 1) + 1;
+                int curIndex = count % indexes.Length;
+                length += Array.IndexOf(indexes, curIndex + 1) + 1;
                 count++;
             }
             return count;
@@ -245,10 +246,11 @@ namespace ToI_1
             int length = 0;
             while (length < text.Length)
             {
-                length += Array.IndexOf(indexes, count + 1) + 1;
+                int curIndex = count % indexes.Length;
+                length += Array.IndexOf(indexes, curIndex + 1) + 1;
                 count++;
             }
-            int result = Array.IndexOf(indexes, count) - (length - text.Length);
+            int result = Array.IndexOf(indexes, count % indexes.Length) - (length - text.Length);
             return result;
         }
 
@@ -283,7 +285,7 @@ namespace ToI_1
                 {
                     matrix[i][j] = text[plainTextIndex++];
                     if (plainTextIndex == text.Length) break;
-                    if (keyIndexMatrix[j] == i + 1) break;
+                    if (keyIndexMatrix[j] == (i % keyIndexMatrix.Length) + 1) break;
                 }
                 if (plainTextIndex == text.Length) break;
             }
@@ -329,10 +331,7 @@ namespace ToI_1
                 int index = Array.IndexOf(keyIndexMatrix, i + 1);
                 for (int j = 0; j < matrix.Length; j++)
                 {
-                    int indexJ = j > keyIndexMatrix.Length ? j + j % keyIndexMatrix.Length : j % keyIndexMatrix.Length;
-                    if (indexJ >= matrix.Length) break;
-
-                    int isLeft = Array.IndexOf(keyIndexMatrix, indexJ + 1);
+                    int isLeft = Array.IndexOf(keyIndexMatrix, j % keyIndexMatrix.Length + 1);
                     if (isLeft >= index)
                         if (j == matrix.Length - 1 && LastRowCount(keyIndexMatrix, text) >= index)
                             matrix[j][index] = text[textIndex++];
@@ -413,7 +412,7 @@ namespace ToI_1
             EnDeCription Function;
             if (method == METHOD.COLUMN) Function = ColumnDecription;
             else Function = VizinerDecription;
-            MainAlgho(Function);
+                MainAlgho(Function);
         }
 
         private void plainFileButton_Click(object sender, EventArgs e)
