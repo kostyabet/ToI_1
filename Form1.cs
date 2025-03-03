@@ -67,10 +67,20 @@ namespace ToI_1
             return (true, resultKey);
         }
 
-        private (bool status, string plainText) CheckIsGoodPlain(string text)
+        private bool hasCorrectLetters(string text, char[] language)
+        {
+            foreach (var c in text.ToUpper())
+                if (language.Contains(c))
+                    return true;
+            return false;
+        }
+
+        private (bool status, string plainText) CheckIsGoodPlain(string text, char[] language)
         {
             if (text.Length == 0)
                 return (false, "Введите исходный текст!");
+            if (!hasCorrectLetters(text, language))
+                return (false, "Введите хотя-бы один корректный символ в исходный текст!");
             return (true, text);
         }
 
@@ -155,7 +165,7 @@ namespace ToI_1
                 string content = File.ReadAllText(filename);
                 bool status;
                 string info;
-                (status, info) = CheckIsGoodPlain(content);
+                (status, info) = CheckIsGoodPlain(content, language == LANGUAGE.EN ? englishAlphabet : russianAlphabet);
                 if (status)
                     return (true, content);
                 return (false, "Строка не является корректной!");
@@ -179,7 +189,7 @@ namespace ToI_1
             }
             // plain text
             string text;
-            (status, text) = CheckIsGoodPlain(plaintTextBox.Text);
+            (status, text) = CheckIsGoodPlain(plaintTextBox.Text, language == LANGUAGE.EN ? englishAlphabet : russianAlphabet);
             if (!status)
             {
                 MessageBox.Show(text, "Ошибка!");
@@ -250,7 +260,7 @@ namespace ToI_1
                 length += Array.IndexOf(indexes, curIndex + 1) + 1;
                 count++;
             }
-            int result = Array.IndexOf(indexes, count % indexes.Length) - (length - text.Length);
+            int result = Array.IndexOf(indexes, count > indexes.Length ? count % indexes.Length : count) - (length - text.Length);
             return result;
         }
 
